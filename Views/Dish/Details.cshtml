@@ -1,0 +1,73 @@
+@model BookManagementApp.Models.Dish_BIT240128
+@{
+    ViewBag.Title = "Dish Details";
+}
+
+<h2>@Model.Name</h2>
+<p><strong>Loại:</strong> @Model.DishCategory?.Name</p>
+<p><strong>Giá:</strong> @Model.Price.ToString("C")</p>
+<p><strong>Thời gian:</strong> @Model.PreparationTime phút (@(Model.PreparationTime <= 15 ? "Nhanh" : "Thông thường"))</p>
+<p><strong>Trạng thái:</strong> @(Model.IsAvailable ? "Đang bán" : "Ngừng bán")</p>
+<p><strong>Mô tả:</strong> @Model.Description</p>
+
+<h3>Hình ảnh</h3>
+@if(TempData["ImageError"] != null)
+{
+    <div class="text-danger">@TempData["ImageError"]</div>
+}
+@if(Model.DishImages == null || !Model.DishImages.Any())
+{
+    <div class="text-info">Chưa có ảnh cho món ăn này.</div>
+}
+else
+{
+    <div class="row">
+        @foreach(var img in Model.DishImages)
+        {
+            <div class="col-md-3">
+                <img src="@img.ImageUrl" alt="img" style="width:100%;height:150px;object-fit:cover" />
+                <div>
+                    @if(img.IsThumbnail)
+                    {
+                        <span class="badge bg-success">Ảnh đại diện</span>
+                    }
+                    else
+                    {
+                        <form asp-action="SetThumbnail" method="post" style="display:inline">
+                            <input type="hidden" name="imageId" value="@img.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Đặt làm đại diện</button>
+                        </form>
+                    }
+
+                    <form asp-action="DeleteImage" method="post" style="display:inline;margin-left:8px">
+                        <input type="hidden" name="imageId" value="@img.Id" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<h4>Thêm ảnh bằng URL</h4>
+<form asp-action="AddImage" method="post">
+    <input type="hidden" name="dishId" value="@Model.Id" />
+    <div class="mb-2">
+        <input type="text" name="imageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+    </div>
+    <button type="submit" class="btn btn-primary">Thêm ảnh</button>
+</form>
+<hr />
+<h4>Import ảnh từ URL (lưu vào server)</h4>
+<form asp-action="ImportImage" method="post">
+    <input type="hidden" name="dishId" value="@Model.Id" />
+    <div class="mb-2">
+        <input type="text" name="remoteUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+    </div>
+    <div class="mb-2 form-check">
+        <input type="checkbox" name="makeThumbnail" class="form-check-input" id="makeThumb" />
+        <label class="form-check-label" for="makeThumb">Đặt ảnh này làm ảnh đại diện</label>
+    </div>
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-success">Import và lưu</button>
+</form>

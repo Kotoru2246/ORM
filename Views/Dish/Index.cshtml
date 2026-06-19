@@ -1,0 +1,70 @@
+@model IEnumerable<BookManagementApp.Models.Dish_BIT240128>
+@{
+    ViewBag.Title = "Dishes";
+}
+
+<h2>Danh sách món ăn</h2>
+
+<form method="get" asp-action="Index">
+    <input type="text" name="search" value="@ViewBag.Search" placeholder="Tìm kiếm tên món..." class="form-control" />
+    @Html.DropDownList("categoryId", (SelectList)ViewBag.Categories, "Tất cả loại", new { @class = "form-control" })
+    @Html.DropDownList("isAvailable", (SelectList)ViewBag.IsAvailableList, new { @class = "form-control" })
+    <div style="display:flex;gap:8px;">
+        <input type="number" step="0.01" name="minPrice" value="@ViewBag.MinPrice" placeholder="Giá từ" class="form-control" />
+        <input type="number" step="0.01" name="maxPrice" value="@ViewBag.MaxPrice" placeholder="Đến" class="form-control" />
+    </div>
+    @Html.DropDownList("sortBy", (SelectList)ViewBag.SortList, new { @class = "form-control" })
+    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+</form>
+
+@if(ViewBag.Error != null)
+{
+    <div class="text-danger">@ViewBag.Error</div>
+}
+@if(ViewBag.Message != null)
+{
+    <div class="text-info">@ViewBag.Message</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Preparation</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach(var d in Model)
+{
+    <tr>
+        <td>
+            @{ 
+                var thumb = d.DishImages?.FirstOrDefault(i => i.IsThumbnail == true)?.ImageUrl;
+                var raw = string.IsNullOrEmpty(thumb) ? "/images/placeholder.svg" : thumb;
+                var imgSrc = raw.StartsWith("/") ? Url.Content("~" + raw) : raw;
+            }
+            <img src="@imgSrc" alt="Ảnh đại diện" style="width:100px;height:60px;object-fit:cover" />
+        </td>
+        <td>@d.Name</td>
+        <td>@d.DishCategory?.Name</td>
+        <td>@d.Price.ToString("C")</td>
+        <td>@(d.PreparationTime <= 15 ? "Nhanh" : "Thông thường")</td>
+        <td>@(d.IsAvailable ? "Đang bán" : "Ngừng bán")</td>
+        <td>
+            <a asp-action="Details" asp-route-id="@d.Id">Chi tiết</a> |
+            <a asp-action="Edit" asp-route-id="@d.Id">Chỉnh sửa</a> |
+            <form asp-action="Delete" method="post" style="display:inline" onsubmit="return confirm('Bạn có chắc muốn xóa món này không?');">
+                <input type="hidden" name="id" value="@d.Id" />
+                <button type="submit" class="btn btn-link p-0">Xóa</button>
+                @Html.AntiForgeryToken()
+            </form>
+        </td>
+    </tr>
+}
+    </tbody>
+</table>

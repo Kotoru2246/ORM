@@ -1,0 +1,16 @@
+@{
+    ViewBag.Title = "Admin";
+}
+
+<h2>Cài đặt quản trị</h2>
+
+@if(TempData["AdminMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["AdminMessage"]</div>
+}
+
+<form asp-action="ResetImages" method="post">
+    @Html.AntiForgeryToken()
+    <p>Nút này sẽ cập nhật tất cả `DishImages.ImageUrl` sang `/images/placeholder.svg` (một lần).</p>
+    <button type="submit" class="btn btn-warning" onclick="return confirm('Bạn có chắc muốn thay đổi tất cả đường dẫn ảnh không?');">Reset ảnh sang placeholder</button>
+</form>

@@ -1,54 +1,94 @@
--- Tạo database theo mẫu họ tên SV - ngày thi
-CREATE DATABASE ORM1_20260619;
+GO
+-- Database for MID term: MID_BIT240128
+-- Student: Triệu Anh Khôi - BIT240128
+
+IF DB_ID('MID_BIT240128') IS NULL
+BEGIN
+    CREATE DATABASE MID_BIT240128;
+END
 GO
 
-USE ORM1_20260619;
+USE MID_BIT240128;
 GO
 
--- Tạo bảng Authors
-CREATE TABLE Authors_20260619 (
-    Id INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(100) NOT NULL,
-    Description NVARCHAR(500) NULL
+-- Table: DishCategories_BIT240128
+IF OBJECT_ID('dbo.DishCategories_BIT240128', 'U') IS NOT NULL
+    DROP TABLE dbo.DishCategories_BIT240128;
+GO
+CREATE TABLE dbo.DishCategories_BIT240128 (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(MAX) NULL
 );
 GO
 
--- Tạo bảng Books
-CREATE TABLE Books_20260619 (
-    Id INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(100) NOT NULL,
-    Price DECIMAL(18,2) NOT NULL,
-    Description NVARCHAR(500) NULL,
-    AuthorId INT NOT NULL,
-    ImageUrl NVARCHAR(500) NULL,
-    CreatedDate DATETIME DEFAULT GETDATE()
+-- Table: Dishes_BIT240128
+IF OBJECT_ID('dbo.Dishes_BIT240128', 'U') IS NOT NULL
+    DROP TABLE dbo.Dishes_BIT240128;
+GO
+CREATE TABLE dbo.Dishes_BIT240128 (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(200) NOT NULL,
+    Price DECIMAL(18,2) NOT NULL CHECK (Price > 0),
+    PreparationTime INT NOT NULL CHECK (PreparationTime > 0),
+    IsAvailable BIT NOT NULL DEFAULT 1,
+    Description NVARCHAR(MAX) NULL,
+    DishCategoryId INT NOT NULL,
+    CONSTRAINT FK_Dishes_Category FOREIGN KEY (DishCategoryId)
+        REFERENCES dbo.DishCategories_BIT240128(Id)
+        ON DELETE NO ACTION -- DeleteBehavior.Restrict
 );
 GO
 
-ALTER TABLE Books_20260619
-ADD CONSTRAINT FK_Books_Authors_20260619
-FOREIGN KEY (AuthorId) REFERENCES Authors_20260619(Id)
-ON DELETE NO ACTION;
+-- Table: DishImages_BIT240128
+IF OBJECT_ID('dbo.DishImages_BIT240128', 'U') IS NOT NULL
+    DROP TABLE dbo.DishImages_BIT240128;
+GO
+CREATE TABLE dbo.DishImages_BIT240128 (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ImageUrl NVARCHAR(1000) NOT NULL,
+    IsThumbnail BIT NOT NULL DEFAULT 0,
+    DishId INT NOT NULL,
+    CONSTRAINT FK_Images_Dish FOREIGN KEY (DishId)
+        REFERENCES dbo.Dishes_BIT240128(Id)
+        ON DELETE CASCADE
+);
 GO
 
--- Thêm dữ liệu mẫu
-INSERT INTO Authors_20260619 (Name, Description)
+-- Unique constraint: Dish name must be unique within the same category
+IF NOT EXISTS (
+    SELECT 1 FROM sys.indexes i
+    JOIN sys.objects o ON i.object_id = o.object_id
+    WHERE o.name = 'Dishes_BIT240128' AND i.is_unique = 1 AND i.name = 'UX_Dishes_Category_Name'
+)
+BEGIN
+    CREATE UNIQUE INDEX UX_Dishes_Category_Name
+    ON dbo.Dishes_BIT240128 (DishCategoryId, Name);
+END
+GO
+
+-- Seed: Categories
+INSERT INTO dbo.DishCategories_BIT240128 (Name, Description)
 VALUES
-    (N'Nguyễn Văn A', N'Tác giả chuyên về C# và .NET'),
-    (N'Trần Văn B', N'Tác giả chuyên về ASP.NET Core'),
-    (N'Lê Thị C', N'Tác giả chuyên về SQL Server');
-GO
+('Mon khai vi', 'Cac mon an khai vi'),
+('Mon chinh', 'Cac mon an chinh'),
+('Trang mieng', 'Mon ngot sau bua an');
 
-INSERT INTO Books_20260619 (Name, Price, Description, AuthorId, ImageUrl, CreatedDate)
-VALUES 
-    (N'Lập trình C# cơ bản', 250000, N'Sách hướng dẫn lập trình C# cho người mới bắt đầu', 1, N'https://via.placeholder.com/160x220?text=C%23', GETDATE()),
-    (N'ASP.NET Core MVC', 350000, N'Phát triển ứng dụng web với ASP.NET Core MVC', 2, N'https://via.placeholder.com/160x220?text=ASP.NET', GETDATE()),
-    (N'SQL Server cho người mới', 200000, N'Hướng dẫn sử dụng SQL Server từ cơ bản đến nâng cao', 3, N'https://via.placeholder.com/160x220?text=SQL', GETDATE()),
-    (N'Entity Framework Core', 300000, N'Làm việc với Entity Framework Core trong .NET', 1, N'https://via.placeholder.com/160x220?text=EF+Core', GETDATE()),
-    (N'Design Patterns', 400000, N'Các mẫu thiết kế trong lập trình hướng đối tượng', 2, N'https://via.placeholder.com/160x220?text=Patterns', GETDATE());
-GO
+-- Seed: Dishes (at least 5)
+INSERT INTO dbo.Dishes_BIT240128 (Name, Price, PreparationTime, IsAvailable, Description, DishCategoryId)
+VALUES
+('Goi cuon', 45000.00, 10, 1, 'Goi cuon tuoi mat', 1),
+('Nem ran', 55000.00, 20, 1, 'Nem ran gion', 1),
+('Pho bo', 70000.00, 15, 1, 'Pho bo truyen thong', 2),
+('Com suon', 80000.00, 25, 1, 'Com suon nuong', 2),
+('Kem dua', 40000.00, 5, 1, 'Kem dua mat lanh', 3);
 
--- Truy vấn dữ liệu để kiểm tra
-SELECT * FROM Books_20260619;
-GO
-    
+-- Seed: Images (some thumbnails)
+INSERT INTO dbo.DishImages_BIT240128 (ImageUrl, IsThumbnail, DishId)
+VALUES
+('/images/placeholder.svg', 1, 1),
+('/images/placeholder.svg', 1, 2),
+('/images/placeholder.svg', 1, 3),
+('/images/placeholder.svg', 1, 4),
+('/images/placeholder.svg', 1, 5);
+

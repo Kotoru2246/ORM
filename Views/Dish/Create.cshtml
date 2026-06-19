@@ -1,0 +1,42 @@
+@model BookManagementApp.Models.Dish_BIT240128
+@{
+    ViewBag.Title = "Tạo món ăn";
+}
+
+<h2>Tạo món ăn</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-2">
+        <label>Tên</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label>Giá</label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label>Thời gian chế biến (phút)</label>
+        <input asp-for="PreparationTime" class="form-control" />
+        <span asp-validation-for="PreparationTime" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label>Loại món</label>
+        <select asp-for="DishCategoryId" asp-items="(SelectList)ViewBag.Categories" class="form-control"></select>
+        <span asp-validation-for="DishCategoryId" class="text-danger"></span>
+    </div>
+    <div class="mb-2 form-check">
+        <input asp-for="IsAvailable" type="checkbox" class="form-check-input" />
+        <label class="form-check-label">Đang bán</label>
+    </div>
+    <div class="mb-2">
+        <label>Mô tả</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Lưu</button>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -223,3 +223,4 @@ C:\Users\jacky\CascadeProjects\BookManagementApp\obj\Debug\net10.0\BookManagemen
 C:\Users\jacky\CascadeProjects\BookManagementApp\obj\Debug\net10.0\BookManagementApp.genruntimeconfig.cache
 C:\Users\jacky\CascadeProjects\BookManagementApp\obj\Debug\net10.0\ref\BookManagementApp.dll
 C:\Users\jacky\CascadeProjects\BookManagementApp\obj\Debug\net10.0\BookManagementApp.sourcelink.json
+c:\Users\jacky\CascadeProjects\BookManagementApp\obj\Debug\net10.0\compressed\icobp1a66y-{0}-7kr38ukksu-7kr38ukksu.gz
