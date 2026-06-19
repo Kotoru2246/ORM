@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookManagementApp.Models
 {
-    [Table("Books")]
+    [Table("Books_20260619")]
     public class Book
     {
         [Key]
@@ -20,8 +20,15 @@ namespace BookManagementApp.Models
         [StringLength(500)]
         public string? Description { get; set; }
 
-        [StringLength(50)]
-        public string? Author { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Vui lòng chọn tác giả")]
+        [Display(Name = "Tác giả")]
+        public int AuthorId { get; set; }
+
+        public Author? Author { get; set; }
+
+        [StringLength(500)]
+        [Display(Name = "Ảnh bìa")]
+        public string? ImageUrl { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
     }

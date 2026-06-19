@@ -1,22 +1,29 @@
 using BookManagementApp.Data;
 using BookManagementApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookManagementApp.Controllers
 {
     public class BookController : Controller
     {
         private readonly BookRepository _bookRepository;
+        private readonly AppDbContext _context;
 
-        public BookController(BookRepository bookRepository)
+        public BookController(BookRepository bookRepository, AppDbContext context)
         {
             _bookRepository = bookRepository;
+            _context = context;
         }
 
         // GET: Book
-        public IActionResult Index()
+        public IActionResult Index(string? searchName, string? sortBy)
         {
-            var books = _bookRepository.GetAll();
+            ViewBag.SearchName = searchName;
+            ViewBag.CurrentSort = sortBy;
+
+            var books = _bookRepository.GetAll(searchName, sortBy);
             return View(books);
         }
 
@@ -34,6 +41,7 @@ namespace BookManagementApp.Controllers
         // GET: Book/Create
         public IActionResult Create()
         {
+            ViewData["Authors"] = GetAuthorSelectList();
             return View();
         }
 
@@ -47,6 +55,8 @@ namespace BookManagementApp.Controllers
                 _bookRepository.Add(book);
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["Authors"] = GetAuthorSelectList(book.AuthorId);
             return View(book);
         }
 
@@ -58,6 +68,7 @@ namespace BookManagementApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["Authors"] = GetAuthorSelectList(book.AuthorId);
             return View(book);
         }
 
@@ -75,6 +86,8 @@ namespace BookManagementApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["Authors"] = GetAuthorSelectList(book.AuthorId);
             return View(book);
         }
 
@@ -100,6 +113,30 @@ namespace BookManagementApp.Controllers
                 return NotFound();
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        private IEnumerable<SelectListItem> GetAuthorSelectList(int? selectedAuthorId = null)
+        {
+            var authors = _context.Authors
+                .AsNoTracking()
+                .OrderBy(author => author.Name)
+                .ToList();
+
+            var items = authors.Select(author => new SelectListItem
+            {
+                Value = author.Id.ToString(),
+                Text = author.Name,
+                Selected = selectedAuthorId.HasValue && selectedAuthorId.Value == author.Id
+            }).ToList();
+
+            items.Insert(0, new SelectListItem
+            {
+                Value = "0",
+                Text = "-- Chọn tác giả --",
+                Selected = !selectedAuthorId.HasValue || selectedAuthorId == 0
+            });
+
+            return items;
         }
     }
 }

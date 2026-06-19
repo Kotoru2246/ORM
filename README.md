@@ -5,6 +5,9 @@
 ## Tính năng
 
 - CRUD (Create, Read, Update, Delete) cho quản lý sách
+- Kết nối `Book` - `Author` qua khóa ngoại `AuthorId`
+- Tìm kiếm sách theo tên và sắp xếp theo giá
+- Thêm trường ảnh bìa cho sách
 - Sử dụng Entity Framework Core (ORM) để truy vấn cơ sở dữ liệu
 - Giao diện web với ASP.NET Core MVC
 - Cơ sở dữ liệu SQL Server
@@ -19,6 +22,7 @@ BookManagementApp/
 │   ├── AppDbContext.cs            # DbContext của Entity Framework
 │   └── BookRepository.cs         # Repository thực hiện CRUD với ORM
 ├── Models/
+│   ├── Author.cs                  # Model Author
 │   └── Book.cs                    # Model Book
 ├── Views/
 │   └── Book/
@@ -47,7 +51,7 @@ BookManagementApp/
 
 3. **Tạo cơ sở dữ liệu:**
    - Mở SQL Server Management Studio (SSMS)
-   - Thực thi script `Database/CreateDatabase.sql` để tạo database và bảng Books
+  - Thực thi script `Database/CreateDatabase.sql` để tạo database và các bảng Authors_20260619, Books_20260619
    - Hoặc sử dụng Entity Framework Migrations:
      ```bash
      dotnet ef migrations add InitialCreate
@@ -59,7 +63,7 @@ BookManagementApp/
    - Chỉnh sửa connection string theo cấu hình SQL Server của bạn:
      ```json
      "ConnectionStrings": {
-       "DefaultConnection": "Server=localhost;Database=BookManagementDB;Trusted_Connection=True;TrustServerCertificate=True;"
+      "DefaultConnection": "Server=localhost;Database=ORM1_20260619;Trusted_Connection=True;TrustServerCertificate=True;"
      }
      ```
 
@@ -75,7 +79,8 @@ Sau đó truy cập: `https://localhost:5001/Book`
 
 ### Danh sách sách (Index)
 - Truy cập `/Book` để xem danh sách tất cả sách
-- Hiển thị thông tin: Id, Tên, Tác giả, Giá, Mô tả, Ngày tạo
+- Hiển thị thông tin: Id, Tên, Tác giả, Giá, Ảnh bìa, Mô tả, Ngày tạo
+- Có ô tìm kiếm theo tên sách và sắp xếp theo giá tăng/giảm
 
 ### Thêm sách mới (Create)
 - Nhấn nút "Thêm Sách Mới"
@@ -96,15 +101,23 @@ Sau đó truy cập: `https://localhost:5001/Book`
 
 File `Data/BookRepository.cs` sử dụng Entity Framework Core để thực hiện các thao tác CRUD:
 
-- **GetAll()**: `SELECT * FROM Books ORDER BY Id`
-- **GetById(int id)**: `SELECT * FROM Books WHERE Id = @id`
-- **Add(Book book)**: `INSERT INTO Books ...`
-- **Update(Book book)**: `UPDATE Books SET ... WHERE Id = @id`
-- **Delete(int id)**: `DELETE FROM Books WHERE Id = @id`
+- **GetAll(searchName, sortBy)**: `SELECT * FROM Books_20260619 ... ORDER BY ...`
+- **GetById(int id)**: `SELECT * FROM Books_20260619 WHERE Id = @id`
+- **Add(Book book)**: `INSERT INTO Books_20260619 ...`
+- **Update(Book book)**: `UPDATE Books_20260619 SET ... WHERE Id = @id`
+- **Delete(int id)**: `DELETE FROM Books_20260619 WHERE Id = @id`
 
 ## Database Schema
 
-Bảng Books có cấu trúc:
+Bảng Authors_20260619 có cấu trúc:
+
+| Column | Type | Description |
+|--------|------|-------------|
+| Id | INT (Primary Key, Identity) | Mã tác giả |
+| Name | NVARCHAR(100) | Tên tác giả |
+| Description | NVARCHAR(500) | Mô tả |
+
+Bảng Books_20260619 có cấu trúc:
 
 | Column | Type | Description |
 |--------|------|-------------|
@@ -112,7 +125,8 @@ Bảng Books có cấu trúc:
 | Name | NVARCHAR(100) | Tên sách |
 | Price | DECIMAL(18,2) | Giá sách |
 | Description | NVARCHAR(500) | Mô tả |
-| Author | NVARCHAR(50) | Tác giả |
+| AuthorId | INT | Khóa ngoại tới Authors_20260619 |
+| ImageUrl | NVARCHAR(500) | Đường dẫn ảnh bìa |
 | CreatedDate | DATETIME | Ngày tạo |
 
 ## Điểm số

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jacky\\CascadeProjects\\BookManagementApp\\BookManagementApp.csproj": {}
+    "c:\\Users\\jacky\\CascadeProjects\\BookManagementApp\\BookManagementApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jacky\\CascadeProjects\\BookManagementApp\\BookManagementApp.csproj": {
+    "c:\\Users\\jacky\\CascadeProjects\\BookManagementApp\\BookManagementApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jacky\\CascadeProjects\\BookManagementApp\\BookManagementApp.csproj",
+        "projectUniqueName": "c:\\Users\\jacky\\CascadeProjects\\BookManagementApp\\BookManagementApp.csproj",
         "projectName": "BookManagementApp",
-        "projectPath": "C:\\Users\\jacky\\CascadeProjects\\BookManagementApp\\BookManagementApp.csproj",
+        "projectPath": "c:\\Users\\jacky\\CascadeProjects\\BookManagementApp\\BookManagementApp.csproj",
         "packagesPath": "C:\\Users\\jacky\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jacky\\CascadeProjects\\BookManagementApp\\obj\\",
+        "outputPath": "c:\\Users\\jacky\\CascadeProjects\\BookManagementApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

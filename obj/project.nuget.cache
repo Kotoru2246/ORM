@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "yyjByXU2++A=",
+  "dgSpecHash": "q311DBNAs6A=",
   "success": true,
-  "projectFilePath": "C:\\Users\\jacky\\CascadeProjects\\BookManagementApp\\BookManagementApp.csproj",
+  "projectFilePath": "c:\\Users\\jacky\\CascadeProjects\\BookManagementApp\\BookManagementApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\jacky\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\jacky\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",

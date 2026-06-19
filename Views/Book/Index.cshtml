@@ -10,6 +10,38 @@
     <a asp-action="Create" class="btn btn-primary">Thêm Sách Mới</a>
 </p>
 
+<form asp-action="Index" method="get" class="row g-3 mb-3">
+    <div class="col-md-5">
+        <input type="text" name="searchName" value="@ViewBag.SearchName" class="form-control" placeholder="Tìm theo tên sách" />
+    </div>
+    <div class="col-md-4">
+        <select name="sortBy" class="form-select">
+            <option value="">Sắp xếp mặc định</option>
+            @if ((ViewBag.CurrentSort as string) == "price_asc")
+            {
+                <option value="price_asc" selected>Giá tăng dần</option>
+            }
+            else
+            {
+                <option value="price_asc">Giá tăng dần</option>
+            }
+
+            @if ((ViewBag.CurrentSort as string) == "price_desc")
+            {
+                <option value="price_desc" selected>Giá giảm dần</option>
+            }
+            else
+            {
+                <option value="price_desc">Giá giảm dần</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-secondary">Lọc</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Xóa lọc</a>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -20,10 +52,13 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Author)
+                Tác giả
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageUrl)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
@@ -45,10 +80,20 @@
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Author)
+                    @(item.Author?.Name ?? "-")
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                    {
+                        <img src="@item.ImageUrl" alt="@item.Name" style="width: 60px; height: 80px; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Description)

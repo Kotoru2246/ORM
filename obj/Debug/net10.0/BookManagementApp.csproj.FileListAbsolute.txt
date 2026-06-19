@@ -222,3 +222,4 @@ C:\Users\jacky\CascadeProjects\BookManagementApp\obj\Debug\net10.0\refint\BookMa
 C:\Users\jacky\CascadeProjects\BookManagementApp\obj\Debug\net10.0\BookManagementApp.pdb
 C:\Users\jacky\CascadeProjects\BookManagementApp\obj\Debug\net10.0\BookManagementApp.genruntimeconfig.cache
 C:\Users\jacky\CascadeProjects\BookManagementApp\obj\Debug\net10.0\ref\BookManagementApp.dll
+C:\Users\jacky\CascadeProjects\BookManagementApp\obj\Debug\net10.0\BookManagementApp.sourcelink.json

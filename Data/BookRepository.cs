@@ -15,16 +15,32 @@ namespace BookManagementApp.Data
             _context = context;
         }
 
-        public List<Book> GetAll()
+        public List<Book> GetAll(string? searchName = null, string? sortBy = null)
         {
-            return _context.Books
-                .OrderBy(b => b.Id)
-                .ToList(); // SELECT * FROM Books ORDER BY Id
+            var query = _context.Books
+                .Include(b => b.Author)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchName))
+            {
+                query = query.Where(b => EF.Functions.Like(b.Name, $"%{searchName.Trim()}%"));
+            }
+
+            query = sortBy?.ToLowerInvariant() switch
+            {
+                "price_asc" => query.OrderBy(b => b.Price).ThenBy(b => b.Name),
+                "price_desc" => query.OrderByDescending(b => b.Price).ThenBy(b => b.Name),
+                _ => query.OrderBy(b => b.Id)
+            };
+
+            return query.ToList(); // SELECT * FROM Books ORDER BY Id
         }
 
         public Book? GetById(int id)
         {
-            return _context.Books.Find(id); // SELECT * FROM Books WHERE Id = @id
+            return _context.Books
+                .Include(b => b.Author)
+                .FirstOrDefault(b => b.Id == id); // SELECT * FROM Books WHERE Id = @id
         }
 
         public void Add(Book book)
@@ -44,7 +60,8 @@ namespace BookManagementApp.Data
             existing.Name = book.Name;
             existing.Price = book.Price;
             existing.Description = book.Description;
-            existing.Author = book.Author;
+            existing.AuthorId = book.AuthorId;
+            existing.ImageUrl = book.ImageUrl;
             _context.SaveChanges(); // lưu thay đổi vào database
             return true;
         }
